@@ -6,10 +6,10 @@ import csv
 parser = argparse.ArgumentParser()
 parser.add_argument('--config', help='path to file containing column header mappings', required=True)
 parser.add_argument('--csv-file', help='path to CSV file', required=True)
-parser.add_argument('--skip-headers', help='skip first line of file as headers', action='store_true')
+parser.add_argument('--skip-headers', help='skip first lines of file as headers', type=int, default=0)
 args = parser.parse_args()
 
-skipped_headers = False
+skip_lines = args.skip_headers
 
 with open(args.config, 'r') as config_file:
     column_headings = config_file.readline().strip()
@@ -21,15 +21,18 @@ with open(args.csv_file, newline='') as csv_file:
     print('!Type:Bank')
 
     for row in csv_reader:
-        if args.skip_headers and not skipped_headers:
-            skipped_headers = True
+        if skip_lines:
+            skip_lines -= 1
         else:
             print('D' + row['date'])
-
-            if row['credit'] != '':
+            if 'credit' in column_headings and row['credit'] :
                 print('T' + row['credit'])
-            elif row['debit'] != '':
+            elif 'debit' in column_headings and row['debit']:
                 print('T-' + row['debit'])
-
-            print('P' + row['description'])
+            elif 'amount' in column_headings and row['amount']:
+                print('T' + row['amount'])
+            if row['number']:    
+                print('N' + row['number'])
+            if row['description']:    
+                print('P' + row['description'])
             print('^')

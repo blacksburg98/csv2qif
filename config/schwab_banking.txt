@@ -1,0 +1,1 @@
+date type number description debit credit balance

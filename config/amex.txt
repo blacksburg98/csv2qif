@@ -1,1 +1,1 @@
-date number description member card amount
+date number description member card amount category type
